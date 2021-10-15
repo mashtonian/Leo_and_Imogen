@@ -17,13 +17,24 @@
 #
 # # Or from the end:
 # print(listOfNumbers[-1], listOfNumbers[-2])
+from functools import lru_cache
 
 
-def nthFibNumber(n):
-    fibNumbers = [1, 1]
-    for x in range(n):
-        fibNumbers += [fibNumbers[-1] + fibNumbers[-2]]
-    return fibNumbers[n - 1]
+def fibRecursive(n, fib_values={1: 1, 2: 1}):
+    if n in fib_values:
+        result = fib_values[n]
+    else:
+        result = fibRecursive(n - 1, fib_values) + fibRecursive(n - 2, fib_values)
+        fib_values.setdefault(n, result)
+    return result
 
 
-print(nthFibNumber(100))
+@lru_cache(maxsize=None)
+def fibRecursiveCached(n):
+    if n < 3:
+        return 1
+    else:
+        return fibRecursiveCached(n - 1) + fibRecursiveCached(n - 2)
+
+
+fibRecursive(5)
